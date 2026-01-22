@@ -2,13 +2,19 @@
 
 namespace app\models;
 
+use Yii;
+//use yii\db\ActiveRecord;
+//use yii\web\IdentityInterface;
+
 class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
 {
     public $id;
     public $username;
     public $password;
+    public $password_hash;
     public $authKey;
     public $accessToken;
+     public $email;
 
     private static $users = [
         '100' => [
@@ -99,6 +105,16 @@ class User extends \yii\base\BaseObject implements \yii\web\IdentityInterface
      */
     public function validatePassword($password)
     {
-        return $this->password === $password;
+        //return $this->password === $password;
+        return Yii::$app->security->validatePassword(
+            $password,
+            $this->password_hash
+        );
     }
+
+    public function setPassword($password)
+    {
+       return Yii::$app->security->generatePasswordHash($this->password);
+    }
+    
 }

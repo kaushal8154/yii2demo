@@ -25,6 +25,8 @@ class Employee extends \yii\db\ActiveRecord
 {
 
     public $empid;
+    public $imageFile;
+    //public $image;
 
     /**
      * ENUM field values
@@ -49,6 +51,7 @@ class Employee extends \yii\db\ActiveRecord
     {
         return [
             [['uuid', 'firstname', 'lastname', 'password', 'gender', 'phone', 'address'], 'default', 'value' => null],
+            [['image'], 'string', 'max' => 200],
             [['dept_id'], 'default', 'value' => 0],
             [['status'], 'default', 'value' => 'active'],
             [['dept_id'], 'integer'],
@@ -73,6 +76,7 @@ class Employee extends \yii\db\ActiveRecord
             'id' => 'ID',
             'uuid' => 'Uuid',
             'dept_id' => 'Dept ID',
+            'image' => 'Image',
             'email' => 'Email',
             'firstname' => 'Firstname',
             'lastname' => 'Lastname',

@@ -7,11 +7,14 @@ use app\models\Employee;
 use app\models\EmployeeSearch;
 use yii\web\Controller;
 use yii\web\NotFoundHttpException;
+use yii\web\UploadedFile;
 
 class EmployeeController extends Controller
 {
     public function actionIndex()
     {
+        //echo Yii::$app->security->generatePasswordHash('123456');exit;
+
         $searchModel = new EmployeeSearch();
         $dataProvider = $searchModel->search(Yii::$app->request->queryParams);
 
@@ -70,18 +73,29 @@ class EmployeeController extends Controller
             throw new NotFoundHttpException();
         }
         
-        //echo $id."<pre>";print_r($postData);exit;
-        
+        //echo $id."<pre>";print_r($postData);exit;        
         /* if ($model->load($postData) && $model->save()) {
             return $this->redirect(['index']);
         } */
+
         if(Yii::$app->request->isPost){
 
             $postData = Yii::$app->request->post();    
+            //$postData['image']='';
             if ($model->load($postData)) {
 
+                /**  photo upload */
+                $imageFile = UploadedFile::getInstance($model, 'imageFile');
+                if($imageFile){
+                    $fileName = time() . '.' . $imageFile->extension;
+                    $imageFile->saveAs('uploads/userphotos/' . $fileName);
+                    $model->image = $fileName;
+                }
+                
+                /**  --------- */
+
                 $model->updated_at = Date('Y-m-d H:i:s');
-                $saved = $model->save();
+                $saved = $model->save();                
                 if($saved){
                     Yii::$app->session->setFlash('success', 'Saved successfully.');
                     return $this->redirect(['index']);

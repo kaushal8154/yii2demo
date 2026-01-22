@@ -25,6 +25,7 @@ echo $form->field($model, 'dept_id')->dropDownList(
 
 echo $form->field($model, 'firstname')->textInput();
 echo $form->field($model, 'lastname')->textInput();
+echo $form->field($model, 'imageFile')->fileInput();
 echo $form->field($model, 'email')->textInput();
 echo $form->field($model, 'gender')->dropDownList([
     'male' => 'Male',

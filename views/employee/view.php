@@ -29,6 +29,27 @@ $this->params['breadcrumbs'][] = $this->title;
     <?= DetailView::widget([
         'model' => $model,
         'attributes' => [
+            [
+                'label' => 'Photo',
+                'attribute' => 'image',
+                'format' => 'html',
+                /* 'value' => $model->image ? Html::img(
+                    Yii::getAlias('@web/uploads/userphotos' . $model->image),
+                    ['width' => '200px']
+                ) : 'No Image', */
+                'value' => function($model){
+                    if($model->image == ''){
+                        return 'Not Available';
+                    }    
+                    
+                    return Html::img(
+                        Yii::getAlias('@web/uploads/userphotos/' . $model->image),
+                        ['width' => '50px']
+                    );
+                    
+                    
+                },
+            ],
             'id',
             'uuid',
             [
