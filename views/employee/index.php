@@ -213,8 +213,10 @@ $this->registerJs("
                         toastr.success('Employee saved successfully');
                         $('#employeeModal').modal('hide');
                     }else{
-                        toastr.error('Failed to save. Something went wrong.');
-                        $('#employeeModal').modal('hide');
+                        console.log(res.data.errors.email);
+                        var error_message = Object.values(res.data.errors)[0];
+                        toastr.error(error_message);
+                        //$('#employeeModal').modal('hide');
                         //alert('failed');
                     }
                 }

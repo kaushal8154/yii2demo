@@ -107,10 +107,13 @@ class EmployeeController extends Controller
                     ]);
 
                 }else{
+                    $errors = $model->getFirstErrors();
                     return $this->asJson([
                         'status' => false,
                         'message' => 'Failed',
-                        'data' => []
+                        'data' => [
+                            'errors'=>$errors,
+                        ]
                     ]);
                 }       
             }
