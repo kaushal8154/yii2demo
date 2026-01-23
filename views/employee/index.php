@@ -119,25 +119,26 @@ echo GridView::widget([
                             'class' => 'btn btn-warning btn-sm custom-update',
                             'title' => 'Edit',
                             'data-id' => $model->id,
-                            'onclick' => "
-                            $('#employeeModal').modal('show')
+                            'onclick' => "$('#employeeModal').modal('show')
                                 .find('#modalContent')
                                 .load('" . Url::to(['employee/update', 'id' => $model->id]) . "');
-                            return false;
-                        "
+                            return false;",
                         ]
                     );
                 },
                 'delete' => function ($url, $model, $key) {
                     return Html::a(
                         '<i class="fa fa-trash"></i>',
-                        $url,
+                        //$url,
+                        'javascript:void(0);',
                         [
                             'class' => 'btn btn-danger btn-sm custom-delete',
                             'title' => 'Delete',
                             'data' => [
-                                'confirm' => 'Are you sure?',
-                                'method' => 'post',
+                                //'confirm' => 'Are you sure?',
+                                //'method' => 'post',
+                                'title' => 'Delete',
+                                'url' => $url,
                             ],
                         ]
                     );
@@ -226,6 +227,34 @@ $this->registerJs("
             $('.toggle-status').bootstrapToggle();
         });
 
+
+        var deleteUrl = '';
+
+        $(document).on('click', '.custom-delete', function (e) {
+            e.preventDefault();
+            deleteUrl = $(this).data('url');
+            $('#deleteModal').modal('show');
+        });
+
+        $('#confirmDelete').on('click', function () {
+            if (deleteUrl !== '') {
+                $.post(deleteUrl, function (res) {
+                    //location.reload(); // or $.pjax.reload({container:'#pjax-grid'});
+                    if (res.status) {
+                        $('#deleteModal').modal('hide');
+                        toastr.success(res.message);
+                        $.pjax.reload({
+                            container: '#employee-grid-pjax',
+                            timeout: 2000
+                        });
+                    }
+
+                    
+                });
+            }
+        });
+
+
     });
 ");
 
@@ -238,6 +267,20 @@ $this->registerJs("
     ]);
 
     echo "<div id='modalContent'></div>";
+
+    Modal::end();
+
+
+    Modal::begin([
+        'id' => 'deleteModal',
+        //'header' => '<h4>Confirm Delete</h4>',
+        'footer' => '
+            <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+            <button type="button" class="btn btn-danger" id="confirmDelete">Delete</button>
+        ',
+    ]);
+
+    echo "<p>Are you sure you want to delete this record?</p>";
 
     Modal::end();
 ?>

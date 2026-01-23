@@ -150,7 +150,14 @@ class EmployeeController extends Controller
     public function actionDelete($id)
     {
         Employee::findOne($id)->delete();
-        return $this->redirect(['index']);
+        //return $this->redirect(['index']);
+
+        return $this->asJson([
+            'status' => true,
+            'message' => 'Deleted Successfully!',
+            'data' => []
+        ]);
+
     }
 
     public function actionView($id)
