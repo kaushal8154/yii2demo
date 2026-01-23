@@ -37,7 +37,10 @@ echo $form->field($model, 'phone')->textInput();
 echo $form->field($model, 'address')->textarea();
 echo $form->field($model, 'status')->dropDownList(['active' => 'Active', 'inactive' => 'Inactive']);
 
-echo Html::submitButton('Save', ['class' => 'btn btn-primary']);
+//echo Html::submitButton('Save', ['class' => 'btn btn-primary']);
+echo Html::button('Save', [
+    'class' => 'btn btn-primary btn-save-empform'
+]);
 
 ActiveForm::end();
 

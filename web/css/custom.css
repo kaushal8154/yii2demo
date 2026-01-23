@@ -2,3 +2,13 @@
 .help-block{
     color:red !important;
 }
+
+.toast-success {
+    background-color: #51A351 !important; /* green */
+    color: white !important;
+}
+
+.toast-error {
+    background-color:brown !important; /* green */
+    color: white !important;
+}

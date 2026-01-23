@@ -97,14 +97,28 @@ class EmployeeController extends Controller
                 $model->updated_at = Date('Y-m-d H:i:s');
                 $saved = $model->save();                
                 if($saved){
-                    Yii::$app->session->setFlash('success', 'Saved successfully.');
-                    return $this->redirect(['index']);
+                    //Yii::$app->session->setFlash('success', 'Saved successfully.');
+                    //return $this->redirect(['index']);
+                    //return "success";
+                    return $this->asJson([
+                        'status' => true,
+                        'message' => 'Data saved successfully',
+                        'data' => []
+                    ]);
+
+                }else{
+                    return $this->asJson([
+                        'status' => false,
+                        'message' => 'Failed',
+                        'data' => []
+                    ]);
                 }       
             }
 
         }        
         
-        return $this->render('update', ['model' => $model]);
+        //return $this->render('update', ['model' => $model]);
+        return $this->renderAjax('_form', ['model' => $model]);
     }
 
     public function actionUpdateOld($id)
