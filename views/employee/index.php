@@ -1,5 +1,6 @@
 <?php
 
+use yii\widgets\Pjax;
 use yii\grid\GridView;
 use yii\helpers\Html;
 //use yii\bootstrap\Alert;
@@ -23,6 +24,16 @@ $this->registerJsFile(
     ['depends' => [\yii\web\JqueryAsset::class]]
 );
 
+$this->registerCssFile(
+    'https://cdn.jsdelivr.net/npm/bootstrap-toggle@2.2.2/css/bootstrap-toggle.min.css',
+    ['depends' => [\yii\bootstrap5\BootstrapAsset::class]]
+);
+
+$this->registerJsFile(
+    'https://cdn.jsdelivr.net/npm/bootstrap-toggle@2.2.2/js/bootstrap-toggle.min.js',
+    ['depends' => [\yii\web\JqueryAsset::class]]
+);
+
 foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
     echo Alert::widget([
         'options' => ['class' => 'alert-' . $type],
@@ -31,7 +42,21 @@ foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
 }
 
 //echo Html::a('Create Employee', ['create'], ['class' => 'btn btn-success']);
-echo Html::a('Create Employee', ['update?id='], ['class' => 'btn btn-success']);
+echo Html::a(
+                'Create Employee', ['update?id='], 
+                [
+                    'class' => 'btn btn-success',
+                    'data-id' => 0,
+                    'onclick' => "$('#employeeModal').modal('show')
+                                .find('#modalContent')
+                                .load('" . Url::to(['employee/update', 'id' => 0]) . "');
+                            return false;",
+                ]
+            );
+
+Pjax::begin([
+    'id' => 'employee-grid-pjax',
+]);
 
 echo GridView::widget([
     'dataProvider' => $dataProvider,
@@ -52,7 +77,23 @@ echo GridView::widget([
             'attribute' => 'dept_id',
             'value' => 'department.dept_name',
         ],
-        'status',
+        //'status',
+        [
+            'attribute' => 'status',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return Html::checkbox('status', ($model->status == 'active' ? 1 : 0), [
+                    'class' => 'toggle-status',
+                    'data-id' => $model->id,
+                    'data-toggle' => 'toggle',
+                    'data-size' => 'small',
+                    'data-on' => 'Active',
+                    'data-off' => 'Inactive',
+                    'data-onstyle' => 'success',
+                    'data-offstyle' => 'danger',
+                ]);
+            }
+        ],
         /* [
             'class' => 'yii\grid\ActionColumn'
         ],*/
@@ -108,15 +149,34 @@ echo GridView::widget([
     ],
 ]);
 
+Pjax::end();
 
 $this->registerJs("
     $(function () {
+
+        $(document).on('change', '.toggle-status', function () {
+            var id = $(this).data('id');
+            var status = $(this).prop('checked') ? 'active' : 'inactive';
+
+            $.ajax({
+                url: 'update-status',
+                type: 'POST',
+                data: {
+                    id: id,
+                    status: status
+                },
+                success: function () {
+                    //console.log('Status updated');
+                    toastr.success('Status updated');
+                }
+            });
+        });
         
         toastr.options = {
             'closeButton': true,
             'progressBar': true,
             'positionClass': 'toast-top-right',
-            'timeOut': false
+            'timeOut': 3000
         };
 
         $(document).on('click', '.custom-update', function () {
@@ -129,8 +189,7 @@ $this->registerJs("
         });                
 
         $(document).on('click','.btn-save-empform',function(){
-            //e.preventDefault();            
-            alert('hhh');            
+            //e.preventDefault();                        
             var myForm = $('#frmEmp');
             //var formData = document.getElementById('frmEmp');
             var form = document.getElementById('frmEmp');
@@ -146,6 +205,10 @@ $this->registerJs("
                 success: function (res) {
                     if (res.status) {
                         //alert('success');
+                        $.pjax.reload({
+                            container: '#employee-grid-pjax',
+                            timeout: 2000
+                        });
                         toastr.success('Employee saved successfully');
                         $('#employeeModal').modal('hide');
                     }else{
@@ -156,6 +219,11 @@ $this->registerJs("
                 }
             });
             return false;
+        });
+
+        // after pjax reload
+        $(document).on('pjax:end', function () {
+            $('.toggle-status').bootstrapToggle();
         });
 
     });

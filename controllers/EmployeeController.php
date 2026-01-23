@@ -165,5 +165,17 @@ class EmployeeController extends Controller
             'model' => $model,
         ]);
     }
+
+    public function actionUpdateStatus()
+    {
+        $id = Yii::$app->request->post('id');
+        $status = Yii::$app->request->post('status');
+
+        $model = Employee::findOne($id);
+        if ($model) {
+            $model->status = $status;
+            $model->save(false);
+        }
+    }
 }
 
