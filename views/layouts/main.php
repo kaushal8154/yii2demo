@@ -33,11 +33,13 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
 
 <header id="header">
     <?php
+
     NavBar::begin([
         'brandLabel' => Yii::$app->name,
         'brandUrl' => Yii::$app->homeUrl,
         'options' => ['class' => 'navbar-expand-md navbar-dark bg-dark fixed-top']
     ]);
+
     echo Nav::widget([
         'options' => ['class' => 'navbar-nav'],
         'items' => [
@@ -53,10 +55,22 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
                         ['class' => 'nav-link btn btn-link logout']
                     )
                     . Html::endForm()
-                    . '</li>'
+                    . '</li>',
+            Yii::$app->user->isGuest
+                ? ['label' => 'Sign Up', 'url' => ['/site/signup']]
+                : ['label' => 'My Files', 'url' => ['/file']],        
         ]
     ]);
+
     NavBar::end();
+
+    /* foreach (Yii::$app->session->getAllFlashes() as $type => $message) {
+        echo Alert::widget([
+            'options' => ['class' => 'alert-' . $type],
+            'body' => $message,
+        ]);
+    } */
+
     ?>
 </header>
 
@@ -65,7 +79,7 @@ $this->registerLinkTag(['rel' => 'icon', 'type' => 'image/x-icon', 'href' => Yii
         <?php if (!empty($this->params['breadcrumbs'])): ?>
             <?= Breadcrumbs::widget(['links' => $this->params['breadcrumbs']]) ?>
         <?php endif ?>
-        <!-- <?= Alert::widget() ?> -->
+        <?= Alert::widget() ?>
         <?= $content ?>
     </div>
 </main>

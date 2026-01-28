@@ -20,7 +20,8 @@ $config = [
             'class' => 'yii\caching\FileCache',
         ],
         'user' => [
-            'identityClass' => 'app\models\User',
+            //'identityClass' => 'app\models\User',
+            'identityClass' => 'app\models\Employee',
             'enableAutoLogin' => true,
         ],
         'errorHandler' => [
@@ -47,6 +48,9 @@ $config = [
             'showScriptName' => false,
             'rules' => [
             ],
+        ],
+        'session' => [
+            'class' => 'yii\web\Session',
         ],
        
     ],

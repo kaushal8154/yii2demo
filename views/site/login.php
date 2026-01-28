@@ -7,6 +7,7 @@
 
 use yii\bootstrap5\ActiveForm;
 use yii\bootstrap5\Html;
+use app\widgets\Alert;
 
 $this->title = 'Login';
 $this->params['breadcrumbs'][] = $this->title;

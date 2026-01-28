@@ -3,7 +3,6 @@
 use yii\widgets\Pjax;
 use yii\grid\GridView;
 use yii\helpers\Html;
-//use yii\bootstrap\Alert;
 use yii\bootstrap5\Alert;
 use yii\bootstrap5\Modal;
 use yii\grid\ActionColumn;

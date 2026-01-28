@@ -8,6 +8,7 @@ use yii\web\Controller;
 use yii\web\Response;
 use yii\filters\VerbFilter;
 use app\models\LoginForm;
+use app\models\SignupForm;
 use app\models\ContactForm;
 use app\models\User;
 
@@ -63,7 +64,13 @@ class SiteController extends Controller
     public function actionIndex()
     {
         
-        $user = new User();
+        /* if (Yii::$app->user->isGuest) {
+            die("is guest");
+        }else{
+            die("is logged in 2");
+        } */
+
+        /* $user = new User();
         $user->username = 'kaushal';
         $user->email = 'kaushal@gmail.com';
         $user->setPassword('123456');
@@ -71,7 +78,7 @@ class SiteController extends Controller
         $user->created_at = time();
         $user->updated_at = time();
         $user->save();
-        echo "hhh";exit;        
+        echo "hhh";exit;    */     
 
         return $this->render('index');
     }
@@ -88,7 +95,8 @@ class SiteController extends Controller
         }
         
         $model = new LoginForm();
-        if ($model->load(Yii::$app->request->post()) && $model->login()) {
+        $model->load(Yii::$app->request->post());
+        if ($model->login()) {
             return $this->goBack();
         }
 
@@ -136,5 +144,27 @@ class SiteController extends Controller
     public function actionAbout()
     {
         return $this->render('about');
+    }
+
+    public function actionSignup()
+    {
+        if (!Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = new SignupForm();
+
+        if ($model->load(Yii::$app->request->post())) {
+            if ($employee = $model->signup()) {
+
+                Yii::$app->session->setFlash('success', 'Registered Successfully! Login to continue');
+                return $this->redirect(['site/login']);
+
+            }
+        }
+
+        return $this->render('signup', [
+            'model' => $model,
+        ]);
     }
 }
