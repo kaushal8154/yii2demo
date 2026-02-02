@@ -27,6 +27,10 @@ class EmployeeFile extends \yii\db\ActiveRecord
     /**
      * {@inheritdoc}
      */
+
+    public $file;
+    //public $file_name;
+
     public static function tableName()
     {
         return 'files';
@@ -38,13 +42,14 @@ class EmployeeFile extends \yii\db\ActiveRecord
     public function rules()
     {
         return [
-            [['filename'], 'default', 'value' => null],
+            //[['filename'], 'default', 'value' => null],
             [['emp_id'], 'default', 'value' => 0],
             [['status'], 'default', 'value' => 'active'],
             [['emp_id'], 'integer'],
             [['status'], 'string'],
             [['created_at', 'updated_at'], 'safe'],
-            [['filename'], 'string', 'max' => 255],
+            //[['file_name'], 'string'],
+            [['file_name'], 'safe'],
             //['status', 'in', 'range' => array_keys(self::optsStatus())],
         ];
     }
@@ -57,7 +62,7 @@ class EmployeeFile extends \yii\db\ActiveRecord
         return [
             'id' => 'ID',
             'emp_id' => 'Emp ID',
-            'filename' => 'Filename',
+            'file_name' => 'Doc File',
             'status' => 'Status',
             'created_at' => 'Created At',
             'updated_at' => 'Updated At',
@@ -73,7 +78,7 @@ class EmployeeFile extends \yii\db\ActiveRecord
     // each file belongs to one employee
     public function getEmployee()
     {
-        return $this->hasOne(Employee::class, ['id' => 'employee_id']);
+        return $this->hasOne(Employee::class, ['id' => 'emp_id']);
     }
    
 }

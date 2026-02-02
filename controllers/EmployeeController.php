@@ -30,14 +30,14 @@ class EmployeeController extends Controller
         //die("here ".$id);         
         if(isset($postData['employee']['dept_id']) && $postData['employee']['dept_id'] > 0){
             $model = Employee::findOne($id);    
-            if ($model->load($postData)) {
+                if ($model->load($postData)) {
 
-            $model->updated_at = Date('Y-m-d H:i:s');
-            $saved = $model->save();
-            if($saved){
-                return $this->redirect(['index']);
-            }       
-        }
+                $model->updated_at = Date('Y-m-d H:i:s');
+                $saved = $model->save();
+                if($saved){
+                    return $this->redirect(['index']);
+                }       
+            }
 
         }else{
             $model = new Employee();    
@@ -62,7 +62,7 @@ class EmployeeController extends Controller
     }
 
     public function actionUpdate($id)
-    {
+    {        
         if($id> 0){
             $model = Employee::findOne($id);
         }else{
@@ -92,7 +92,7 @@ class EmployeeController extends Controller
                     $model->image = $fileName;
                 }
                 
-                /**  --------- */
+                /**  --------- */                
 
                 $model->updated_at = Date('Y-m-d H:i:s');
                 $saved = $model->save();                

@@ -34,7 +34,7 @@ class SiteController extends Controller
             'verbs' => [
                 'class' => VerbFilter::class,
                 'actions' => [
-                    'logout' => ['post'],
+                    //'logout' => ['post'],
                 ],
             ],
         ];
@@ -64,11 +64,9 @@ class SiteController extends Controller
     public function actionIndex()
     {
         
-        /* if (Yii::$app->user->isGuest) {
-            die("is guest");
-        }else{
-            die("is logged in 2");
-        } */
+        /* $roles = Yii::$app->authManager->getRolesByUser(22);
+        echo "<pre>";print_r($roles);echo "</pre>";exit; */
+        
 
         /* $user = new User();
         $user->username = 'kaushal';
@@ -78,7 +76,7 @@ class SiteController extends Controller
         $user->created_at = time();
         $user->updated_at = time();
         $user->save();
-        echo "hhh";exit;    */     
+        echo "hhh";exit;    */
 
         return $this->render('index');
     }
@@ -156,6 +154,10 @@ class SiteController extends Controller
 
         if ($model->load(Yii::$app->request->post())) {
             if ($employee = $model->signup()) {
+                
+                $auth = Yii::$app->authManager;
+                $auth->assign($auth->getRole('employee'),$employee->id);                
+                
 
                 Yii::$app->session->setFlash('success', 'Registered Successfully! Login to continue');
                 return $this->redirect(['site/login']);
@@ -167,4 +169,34 @@ class SiteController extends Controller
             'model' => $model,
         ]);
     }
+
+
+    public function actionProfile()
+    {
+
+        if (Yii::$app->user->isGuest) {
+            return $this->goHome();
+        }
+
+        $model = Yii::$app->user->identity; // current logged in user
+
+        if (!$model) {
+            throw new NotFoundHttpException('User not found.');
+        }
+
+        if (Yii::$app->request->isPost) {
+            $postData = Yii::$app->request->post();
+            //echo "hh<pre>";print_r($postData);echo "</pre>";exit;
+            if ($model->load(Yii::$app->request->post()) && $model->save()) {
+                Yii::$app->session->setFlash('success', 'Profile updated successfully.');
+                return $this->refresh();
+            }
+        }     
+        
+
+        return $this->render('my-profile', [
+            'model' => $model,
+        ]);
+    }
+
 }

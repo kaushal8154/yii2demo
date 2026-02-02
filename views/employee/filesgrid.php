@@ -15,26 +15,40 @@ $this->title = 'My Files';
     'layout' => "{items}\n{pager}",
     'columns' => [
         ['class' => 'yii\grid\SerialColumn'],
-
-        'file_name',
-
+        [
+            'label' => 'Employee Name',
+            'value' => function ($model) {
+                return $model->employee->username ?? '—';
+            },
+        ],
+        'file_name',        
         [
             'attribute' => 'created_at',
             'format' => ['date', 'php:d-m-Y'],
         ],
-
         [
             'label' => 'View',
             'format' => 'raw',
             'value' => function ($model) {
                 return Html::a(
                     'View',
-                    Yii::getAlias('@web/uploads/employee_files/' . $model->filename),
+                    Yii::getAlias('@web/uploads/employee_files/' . $model->file_name),
                     ['target' => '_blank', 'class' => 'btn btn-sm btn-primary']
                 );
             }
         ],
-
+        [
+            'label' => 'Edit',
+            'format' => 'raw',
+            'value' => function ($model) {
+                return (Yii::$app->user->can('editFile') && (Yii::$app->user->id ==  $model->emp_id) || Yii::$app->user->id ==  $model->employee->manager_id) ? Html::a(
+                    'Edit',
+                    'file/update?id='.$model->id,
+                    ['target' => '_blank', 'class' => 'btn btn-sm btn-primary']
+                ) : '';
+            }
+        ],
+        
         /* [
             'class' => 'yii\grid\ActionColumn',
             'template' => '{delete}',
